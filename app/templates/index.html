@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex Commerce</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="navbar glass">
+        <div>
+          <p class="eyebrow">Modern Storefront</p>
+          <h1>Codex Commerce</h1>
+        </div>
+        <nav class="nav-actions">
+          <button id="catalog-nav" class="nav-link active">Catalog</button>
+          <button id="orders-nav" class="nav-link hidden-auth">Orders</button>
+          <button id="admin-nav" class="nav-link hidden-admin">Admin</button>
+          <button id="auth-open" class="btn secondary">Login</button>
+          <button id="logout-btn" class="btn ghost hidden-auth">Logout</button>
+          <button id="cart-toggle" class="btn primary">
+            Cart
+            <span id="cart-count" class="badge">0</span>
+          </button>
+        </nav>
+      </header>
+
+      <main class="main-grid">
+        <section class="hero glass fade-in">
+          <div>
+            <p class="eyebrow">Curated essentials</p>
+            <h2>Premium everyday products with a clean shopping experience.</h2>
+            <p class="hero-copy">
+              Explore animated product cards, seamless cart management, secure JWT authentication,
+              and admin inventory controls.
+            </p>
+          </div>
+          <div class="hero-stats">
+            <article>
+              <strong>FastAPI</strong>
+              <span>Modular backend</span>
+            </article>
+            <article>
+              <strong>Vanilla JS</strong>
+              <span>Custom UI interactions</span>
+            </article>
+            <article>
+              <strong>JWT Auth</strong>
+              <span>Role-based access</span>
+            </article>
+          </div>
+        </section>
+
+        <section id="content-view" class="content-view slide-up">
+          <div id="catalog-view">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Products</p>
+                <h3>Featured collection</h3>
+              </div>
+              <div class="search-shell glass">
+                <input id="search-input" type="search" placeholder="Search products..." />
+              </div>
+            </div>
+            <div id="loading-state" class="skeleton-grid"></div>
+            <div id="product-grid" class="product-grid"></div>
+          </div>
+
+          <div id="orders-view" class="hidden">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Orders</p>
+                <h3>Your order history</h3>
+              </div>
+            </div>
+            <div id="orders-list" class="orders-list"></div>
+          </div>
+
+          <div id="admin-view" class="hidden">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Admin</p>
+                <h3>Inventory management</h3>
+              </div>
+            </div>
+            <div class="admin-layout">
+              <form id="product-form" class="glass form-card">
+                <h4>Add / Edit Product</h4>
+                <input type="hidden" id="product-id" />
+                <label>Name<input id="product-name" required /></label>
+                <small class="error" id="product-name-error"></small>
+                <label>Description<textarea id="product-description" rows="4" required></textarea></label>
+                <small class="error" id="product-description-error"></small>
+                <label>Image URL<input id="product-image" required /></label>
+                <small class="error" id="product-image-error"></small>
+                <label>Price<input id="product-price" type="number" min="0.01" step="0.01" required /></label>
+                <small class="error" id="product-price-error"></small>
+                <label>Stock<input id="product-stock" type="number" min="0" step="1" required /></label>
+                <small class="error" id="product-stock-error"></small>
+                <button id="product-submit" class="btn primary" type="submit" disabled>Save Product</button>
+              </form>
+              <div>
+                <div id="admin-products" class="admin-products"></div>
+                <div class="section-heading order-admin-heading">
+                  <div>
+                    <p class="eyebrow">Orders</p>
+                    <h3>All customer orders</h3>
+                  </div>
+                </div>
+                <div id="admin-orders" class="orders-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <aside id="cart-sidebar" class="cart-sidebar">
+      <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button id="cart-close" class="icon-btn">✕</button>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-footer glass">
+        <div>
+          <span>Total</span>
+          <strong id="cart-total">$0.00</strong>
+        </div>
+        <button id="checkout-btn" class="btn primary">Checkout</button>
+      </div>
+    </aside>
+
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-card glass">
+        <button id="modal-close" class="icon-btn modal-close">✕</button>
+        <img id="modal-image" alt="Product image" />
+        <div>
+          <p class="eyebrow">Product Details</p>
+          <h3 id="modal-name"></h3>
+          <p id="modal-description"></p>
+          <div class="modal-meta">
+            <span id="modal-price"></span>
+            <span id="modal-stock"></span>
+          </div>
+          <button id="modal-add" class="btn primary">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="auth-modal" class="modal hidden">
+      <div class="modal-card auth-card glass">
+        <button id="auth-close" class="icon-btn modal-close">✕</button>
+        <div class="tabs">
+          <button id="login-tab" class="tab active">Login</button>
+          <button id="register-tab" class="tab">Register</button>
+        </div>
+        <form id="auth-form" novalidate>
+          <label>Full Name<input id="auth-name" class="register-only" /></label>
+          <small id="auth-name-error" class="error register-only"></small>
+          <label>Email<input id="auth-email" type="email" required /></label>
+          <small id="auth-email-error" class="error"></small>
+          <label>Password<input id="auth-password" type="password" required /></label>
+          <small id="auth-password-error" class="error"></small>
+          <button id="auth-submit" class="btn primary" type="submit" disabled>Login</button>
+        </form>
+        <p class="auth-hint">Use the seeded admin account from the README for admin features.</p>
+      </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+    <script src="/static/js/app.js" defer></script>
+  </body>
+</html>
